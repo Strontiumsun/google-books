@@ -12,7 +12,10 @@ class Books extends Component {
     books: [],
     title: "",
     author: "",
-    synopsis: ""
+    description: "",
+    image: "",
+    link: ""
+
   };
 
   // Add code here to get all books from the database and save them to this.state.books
@@ -20,11 +23,11 @@ class Books extends Component {
     this.retrieveBooks()
   }
 
-  retrieveBooks = () => {
-    API.getBooks()
-      .then(res => this.setState({ books: res.data }))
-      .catch(err => console.log(err));
-  }
+  // retrieveBooks = () => {
+  //   API.getBooks()
+  //     .then(res => this.setState({ books: res.data }))
+  //     .catch(err => console.log(err));
+  // }
 
   deleteBook = (id) => {
     API.deleteBook(id)
