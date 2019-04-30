@@ -3,14 +3,6 @@ const db = require("../models");
 // Defining methods for the booksController
 // let's split this off into book and google controller
 module.exports = {
-  googleFind: function (req, res) {
-    var BASEURL = "https://www.googleapis.com/books/v1/volumes?q=";
-    var query = req.query;
-    axios.get(`${BASEURL}${query}`)
-      .then(res => res.data.items)
-      .then(books => res.json(books))
-      .catch(err => res.status(422).json(err))
-  },
   findAll: function (req, res) {
     db.Book
       .find(req.query)

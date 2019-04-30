@@ -1,5 +1,9 @@
 const router = require("express").Router();
 const booksController = require("../../controllers/booksController");
+const googleController = require("../../controllers/googleController");
+
+router.route("/:query")
+  .get(googleController.googleFind)
 
 // Matches with "/api/books"
 router.route("/")

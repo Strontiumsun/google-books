@@ -2,16 +2,17 @@ import React, { Component } from "react";
 import Jumbotron from "../components/Jumbotron";
 import { Col, Row, Container } from "../components/Grid";
 // import { List, ListItem } from "../components/List";
-// import { Input, TextArea, FormBtn } from "../components/Form";
-import Booklist, { BookListItem } from "../components/Booklist";
+import { Input, FormBtn } from "../components/Form";
+import { BookList, BookListItem } from "../components/BookList";
 import API from "../utils/API"
-import { FormBtn } from "../components/Form";
+
 
 class Books extends Component {
   // Initialize this.state.books as an empty array
   state = {
     books: [],
-    search: [],
+    query: "",
+    results: [],
     title: "",
     author: "",
     description: "",
@@ -31,9 +32,9 @@ class Books extends Component {
       .catch(err => console.log(err));
   }
 
-  googleBooks = (query) => {
-    API.googleBooks(query)
-      .then(res => this.setState({ search: res.data }))
+  googleSearch = (query) => {
+    API.getGoogleBooks(query).then(res => console.log(res.data))
+      // .then(res => this.setState({ results: res.data }))
       .catch(err => console.log(err))
   }
 
@@ -52,37 +53,39 @@ class Books extends Component {
     this.setState({
       [name]: value
     });
+
+
   };
 
 
-  // handleFormSubmit = event => {
-  //   event.preventDefault();
-  //   API.saveBook({ title: this.state.title, author: this.state.author, synopsis: this.state.synopsis })
-  //     .then(res => this.retrieveBooks())
-  //     .catch(err => console.log(err));
+  handleFormSubmit = event => {
+    event.preventDefault();
+    console.log("Pressed submit button!")
 
-  // }
+    this.googleSearch(this.state.value)
+
+  }
 
 
   render() {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
+          <Col size="md-12">
             <Jumbotron>
-              <h1>Jumbo!</h1>
+              <h1>React Google Books Search!</h1>
+              <h3>What do you know? You can search for books! Eventually...</h3>
             </Jumbotron>
           </Col>
           <Col size="md-12">
-            <TextArea />
             <Input onClick={this.handleInputChange}>
             </Input>
-            <FormBtn onClick={}></FormBtn>
+            <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
           </Col>
           <Col size="md-12">
-            <Booklist>
-
-            </Booklist>
+            <BookList>
+              <BookListItem>Render Books Here</BookListItem>
+            </BookList>
           </Col>
         </Row>
       </Container>
