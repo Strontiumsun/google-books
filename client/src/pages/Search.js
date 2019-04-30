@@ -1,29 +1,42 @@
 import React, { Component } from "react";
 import Jumbotron from "../components/Jumbotron";
-import DeleteBtn from "../components/DeleteBtn";
 import { Col, Row, Container } from "../components/Grid";
-import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
+import { Input, FormBtn } from "../components/Form";
+import { BookList, BookListItem } from "../components/BookList";
 import API from "../utils/API"
+
+
 
 class Books extends Component {
   // Initialize this.state.books as an empty array
   state = {
     books: [],
+    query: "",
+    results: [],
     title: "",
     author: "",
-    synopsis: ""
+    description: "",
+    image: "",
+    link: ""
+
   };
 
   // Add code here to get all books from the database and save them to this.state.books
-  componentDidMount() {
-    this.retrieveBooks()
-  }
+  // componentDidMount() {
+  //   this.retrieveBooks()
+  // }
 
   retrieveBooks = () => {
     API.getBooks()
       .then(res => this.setState({ books: res.data }))
       .catch(err => console.log(err));
+  }
+
+  googleSearch = (query) => {
+    API.getGoogleBooks(query)
+      // .then(res => console.log(res.data))
+      .then(res => this.setState({ results: res.data }))
+      .catch(err => console.log(err))
   }
 
   deleteBook = (id) => {
@@ -41,14 +54,17 @@ class Books extends Component {
     this.setState({
       [name]: value
     });
+
+
   };
 
 
   handleFormSubmit = event => {
     event.preventDefault();
-    API.saveBook({ title: this.state.title, author: this.state.author, synopsis: this.state.synopsis })
-      .then(res => this.retrieveBooks())
-      .catch(err => console.log(err));
+    console.log("Pressed submit button!")
+
+    console.log(this.state.query)
+    this.googleSearch(this.state.query)
 
   }
 
@@ -57,58 +73,41 @@ class Books extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
+          <Col size="md-12">
             <Jumbotron>
-              <h1>What Books Should I Read?</h1>
+              <h1>React Google Books Search!</h1>
+              <h3>What do you know? You can search for books! Eventually...</h3>
             </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                name="title"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Title (required)"
-
-              />
-              <Input
-                value={this.state.author}
-                name="author"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                name="synopsis"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Synopsis (Optional)"
-
-              />
-              <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
-            </form>
           </Col>
-          <Col size="md-6 sm-12">
-            <Jumbotron>
-              <h1>Books On My List</h1>
-            </Jumbotron>
-            {this.state.books.length ? (
-              <List>
-                {this.state.books.map(book => (
-                  <ListItem key={book._id}>
-                    <a href={"/books/" + book._id}>
-                      <strong>
-                        {book.title} by {book.author}
-                      </strong>
-                    </a>
-                    <DeleteBtn
-                      onClick={() => this.deleteBook(book._id)} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-                <h3>No Results to Display</h3>
-              )}
+          <Col size="md-12">
+            <Input
+              value={this.state.query}
+              name="query"
+              onChange={this.handleInputChange}
+              type="text"
+              placeholder="Search...">
+            </Input>
+            <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
+          </Col>
+          <Col size="md-12">
+            {!this.state.results.length ? (<h1 className="text-center">No Books to Display</h1>) : (
+              <BookList>
+                {this.state.results.map(books => {
+                  return (
+                    <BookListItem
+                      key={books.id}
+                      title={books.volumeInfo.title}
+                      link={books.volumeInfo.infoLink}
+                      authors={books.volumeInfo.authors.join(", ")}
+                      description={books.volumeInfo.description}
+                      thumbnail={books.volumeInfo.imageLinks.thumbnail}
+                    >
+                    </BookListItem>)
+
+                })}
+              </BookList>
+            )}
+
           </Col>
         </Row>
       </Container>
