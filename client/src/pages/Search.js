@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Jumbotron from "../components/Jumbotron";
 import { Col, Row, Container } from "../components/Grid";
-// import { List, ListItem } from "../components/List";
 import { Input, FormBtn } from "../components/Form";
 import { BookList, BookListItem } from "../components/BookList";
 import API from "../utils/API"
@@ -34,8 +33,9 @@ class Books extends Component {
   }
 
   googleSearch = (query) => {
-    API.getGoogleBooks(query).then(res => console.log(res))
-      // .then(res => this.setState({ results: res.data }))
+    API.getGoogleBooks(query)
+      // .then(res => console.log(res.data))
+      .then(res => this.setState({ results: res.data }))
       .catch(err => console.log(err))
   }
 
@@ -90,9 +90,24 @@ class Books extends Component {
             <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
           </Col>
           <Col size="md-12">
-            <BookList>
-              <BookListItem>Render Books Here</BookListItem>
-            </BookList>
+            {!this.state.results.length ? (<h1 className="text-center">No Books to Display</h1>) : (
+              <BookList>
+                {this.state.results.map(books => {
+                  return (
+                    <BookListItem
+                      key={books.id}
+                      title={books.volumeInfo.title}
+                      link={books.volumeInfo.infoLink}
+                      authors={books.volumeInfo.authors.join(", ")}
+                      description={books.volumeInfo.description}
+                      thumbnail={books.volumeInfo.imageLinks.thumbnail}
+                    >
+                    </BookListItem>)
+
+                })}
+              </BookList>
+            )}
+
           </Col>
         </Row>
       </Container>
