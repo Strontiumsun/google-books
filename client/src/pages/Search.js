@@ -34,7 +34,7 @@ class Books extends Component {
   }
 
   googleSearch = (query) => {
-    API.getGoogleBooks(query).then(res => console.log(res.data))
+    API.getGoogleBooks(query).then(res => console.log(res))
       // .then(res => this.setState({ results: res.data }))
       .catch(err => console.log(err))
   }
