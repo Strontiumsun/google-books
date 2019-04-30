@@ -7,6 +7,7 @@ import { BookList, BookListItem } from "../components/BookList";
 import API from "../utils/API"
 
 
+
 class Books extends Component {
   // Initialize this.state.books as an empty array
   state = {
@@ -62,7 +63,8 @@ class Books extends Component {
     event.preventDefault();
     console.log("Pressed submit button!")
 
-    this.googleSearch(this.state.value)
+    console.log(this.state.query)
+    this.googleSearch(this.state.query)
 
   }
 
@@ -78,7 +80,12 @@ class Books extends Component {
             </Jumbotron>
           </Col>
           <Col size="md-12">
-            <Input onClick={this.handleInputChange}>
+            <Input
+              value={this.state.query}
+              name="query"
+              onChange={this.handleInputChange}
+              type="text"
+              placeholder="Search...">
             </Input>
             <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
           </Col>
