@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import Jumbotron from "../components/Jumbotron";
-import DeleteBtn from "../components/DeleteBtn";
 import { Col, Row, Container } from "../components/Grid";
-import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
+// import { List, ListItem } from "../components/List";
+// import { Input, TextArea, FormBtn } from "../components/Form";
+import Booklist, { BookListItem } from "../components/Booklist";
 import API from "../utils/API"
+import { FormBtn } from "../components/Form";
 
 class Books extends Component {
   // Initialize this.state.books as an empty array
   state = {
     books: [],
+    search: [],
     title: "",
     author: "",
     description: "",
@@ -19,15 +21,21 @@ class Books extends Component {
   };
 
   // Add code here to get all books from the database and save them to this.state.books
-  componentDidMount() {
-    this.retrieveBooks()
+  // componentDidMount() {
+  //   this.retrieveBooks()
+  // }
+
+  retrieveBooks = () => {
+    API.getBooks()
+      .then(res => this.setState({ books: res.data }))
+      .catch(err => console.log(err));
   }
 
-  // retrieveBooks = () => {
-  //   API.getBooks()
-  //     .then(res => this.setState({ books: res.data }))
-  //     .catch(err => console.log(err));
-  // }
+  googleBooks = (query) => {
+    API.googleBooks(query)
+      .then(res => this.setState({ search: res.data }))
+      .catch(err => console.log(err))
+  }
 
   deleteBook = (id) => {
     API.deleteBook(id)
@@ -47,13 +55,13 @@ class Books extends Component {
   };
 
 
-  handleFormSubmit = event => {
-    event.preventDefault();
-    API.saveBook({ title: this.state.title, author: this.state.author, synopsis: this.state.synopsis })
-      .then(res => this.retrieveBooks())
-      .catch(err => console.log(err));
+  // handleFormSubmit = event => {
+  //   event.preventDefault();
+  //   API.saveBook({ title: this.state.title, author: this.state.author, synopsis: this.state.synopsis })
+  //     .then(res => this.retrieveBooks())
+  //     .catch(err => console.log(err));
 
-  }
+  // }
 
 
   render() {
@@ -62,56 +70,19 @@ class Books extends Component {
         <Row>
           <Col size="md-6">
             <Jumbotron>
-              <h1>What Books Should I Read?</h1>
+              <h1>Jumbo!</h1>
             </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                name="title"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Title (required)"
-
-              />
-              <Input
-                value={this.state.author}
-                name="author"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                name="synopsis"
-                onChange={this.handleInputChange}
-                type="text"
-                placeholder="Synopsis (Optional)"
-
-              />
-              <FormBtn onClick={this.handleFormSubmit}>Submit Book</FormBtn>
-            </form>
           </Col>
-          <Col size="md-6 sm-12">
-            <Jumbotron>
-              <h1>Books On My List</h1>
-            </Jumbotron>
-            {this.state.books.length ? (
-              <List>
-                {this.state.books.map(book => (
-                  <ListItem key={book._id}>
-                    <a href={"/books/" + book._id}>
-                      <strong>
-                        {book.title} by {book.author}
-                      </strong>
-                    </a>
-                    <DeleteBtn
-                      onClick={() => this.deleteBook(book._id)} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-                <h3>No Results to Display</h3>
-              )}
+          <Col size="md-12">
+            <TextArea />
+            <Input onClick={this.handleInputChange}>
+            </Input>
+            <FormBtn onClick={}></FormBtn>
+          </Col>
+          <Col size="md-12">
+            <Booklist>
+
+            </Booklist>
           </Col>
         </Row>
       </Container>
