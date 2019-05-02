@@ -3,6 +3,8 @@ import Thumbnail from "../Thumbnail";
 import { Container, Row, Col } from "../Grid";
 
 
+
+
 export function BookList({ children }) {
   return <ul className="list-group">{children}</ul>;
 }
@@ -28,6 +30,8 @@ export function BookListItem(props) {
             >
               Learn More
             </a>
+            <br />
+
           </Col>
         </Row>
       </Container>

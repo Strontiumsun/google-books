@@ -1,4 +1,6 @@
 const axios = require("axios")
+const db = require("../models");
+
 
 module.exports = {
     googleFind: function (req, res) {
@@ -25,3 +27,9 @@ module.exports = {
             .catch(err => res.status(422).json(err))
     },
 }
+
+// .then(googleBooks =>
+            //     db.Book.find().then(dbBooks =>
+            //         googleBooks.filter(googleBooks =>
+            //             dbBooks.every(dbBook => dbBook.googleId.toString() !== googleBooks.id)))
+            // )
