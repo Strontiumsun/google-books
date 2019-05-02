@@ -3,6 +3,8 @@ import Jumbotron from "../components/Jumbotron";
 import { Col, Row, Container } from "../components/Grid";
 import { Input, FormBtn } from "../components/Form";
 import { BookList, BookListItem } from "../components/BookList";
+import SaveBtn from "../components/SaveBtn"
+
 import API from "../utils/API"
 
 
@@ -10,27 +12,10 @@ import API from "../utils/API"
 class Books extends Component {
   // Initialize this.state.books as an empty array
   state = {
-    books: [],
     query: "",
     results: [],
-    title: "",
-    author: "",
-    description: "",
-    image: "",
-    link: ""
-
   };
 
-  // Add code here to get all books from the database and save them to this.state.books
-  // componentDidMount() {
-  //   this.retrieveBooks()
-  // }
-
-  retrieveBooks = () => {
-    API.getBooks()
-      .then(res => this.setState({ books: res.data }))
-      .catch(err => console.log(err));
-  }
 
   googleSearch = (query) => {
     API.getGoogleBooks(query)
@@ -39,10 +24,25 @@ class Books extends Component {
       .catch(err => console.log(err))
   }
 
-  deleteBook = (id) => {
-    API.deleteBook(id)
-      .then(res => this.retrieveBooks())
-      .catch(err => console.log(err))
+  // deleteBook = (id) => {
+  //   API.deleteBook(id)
+  //     .then(res => this.retrieveBooks())
+  //     .catch(err => console.log(err))
+  // }
+
+  // I couldn't get this function to work
+  handleBookSave = id => {
+    console.log("clicked save button!")
+    // line 37 came from Paul. 
+    const book = this.state.results.find(books => books.id === id)
+
+    API.saveBook({
+      title: book.volumeInfo.title,
+      link: book.volumeInfo.infoLink,
+      authors: book.volumeInfo.authors,
+      description: book.volumeInfo.description,
+      image: book.volumeInfo.imageLinks.thumbnail
+    }).then(res => console.log("book saved!")).catch(err => console.log(err))
   }
 
   handleInputChange = event => {
@@ -76,7 +76,7 @@ class Books extends Component {
           <Col size="md-12">
             <Jumbotron>
               <h1>React Google Books Search!</h1>
-              <h3>What do you know? You can search for books! Eventually...</h3>
+              <h3>What do you know? You can search for books!</h3>
             </Jumbotron>
           </Col>
           <Col size="md-12">
@@ -92,19 +92,25 @@ class Books extends Component {
           <Col size="md-12">
             {!this.state.results.length ? (<h1 className="text-center">No Books to Display</h1>) : (
               <BookList>
-                {this.state.results.map(books => {
-                  return (
-                    <BookListItem
-                      key={books.id}
-                      title={books.volumeInfo.title}
-                      link={books.volumeInfo.infoLink}
-                      authors={books.volumeInfo.authors.join(", ")}
-                      description={books.volumeInfo.description}
-                      thumbnail={books.volumeInfo.imageLinks.thumbnail}
-                    >
-                    </BookListItem>)
+                {this.state.results.map(books =>
+                  (
+                    <div>
+                      <BookListItem
+                        key={books.title}
+                        title={books.volumeInfo.title}
+                        link={books.volumeInfo.infoLink}
+                        authors={books.volumeInfo.authors.join(", ")}
+                        description={books.volumeInfo.description}
+                        thumbnail={books.volumeInfo.imageLinks.thumbnail}
+                      >
+                      </BookListItem>
+                      <SaveBtn
+                        onClick={() => this.handleBookSave(books.id)}
+                      />
 
-                })}
+                    </div>)
+
+                )}
               </BookList>
             )}
 
